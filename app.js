@@ -1,5 +1,28 @@
 import { questions, timelines, achievements } from './questions.js';
 import { sounds } from './sounds.js';
+import { auth } from './firebase-config.js';
+import { onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+// Listen for auth state changes
+onAuthStateChanged(auth, user => {
+  updateConnectionBadge(user);
+});
+
+// Connection badge updater
+function updateConnectionBadge(user) {
+  const badge = DOM.connStatus;
+  if (!badge) return;
+  if (user) {
+    badge.classList.remove('offline');
+    badge.classList.add('online');
+    const email = user.email || `User ${user.uid.slice(0,6)}`;
+    badge.querySelector('.badge-text').textContent = `Online (${email})`;
+  } else {
+    badge.classList.remove('online');
+    badge.classList.add('offline');
+    badge.querySelector('.badge-text').textContent = 'Offline';
+  }
+}
 
 // ==========================================
 // CORE APP STATE
@@ -69,6 +92,8 @@ const DOM = {
   btnGoHome: document.getElementById('btn-go-home'),
   btnResetStats: document.getElementById('btn-reset-stats'),
   btnCloseStats: document.getElementById('btn-close-stats'),
+  // Connection badge
+  connStatus: document.getElementById('conn-status'),
   
   // Screens & Popups
   screenSplash: document.getElementById('screen-splash'),
@@ -890,6 +915,61 @@ function resetStatsData() {
     alert("Chronicles reset. Start your historical journey fresh!");
   }
 }
+
+// UI EVENT LISTENERS (Login Modal)
+const loginBtn = document.getElementById('btn-login');
+const modalLogin = document.getElementById('modal-login');
+const closeLoginBtn = document.getElementById('btn-close-login');
+const loginSubmitBtn = document.getElementById('btn-login-submit');
+const signupSubmitBtn = document.getElementById('btn-signup-submit');
+
+loginBtn?.addEventListener('click', () => {
+  modalLogin.classList.add('active');
+  document.getElementById('login-email')?.focus();
+});
+
+closeLoginBtn?.addEventListener('click', () => {
+  modalLogin.classList.remove('active');
+});
+
+loginSubmitBtn?.addEventListener('click', async () => {
+  const email = document.getElementById('login-email')?.value.trim();
+  const password = document.getElementById('login-password')?.value;
+  if (!email || !password) {
+    alert('Please enter both email and password.');
+    return;
+  }
+  try {
+    await signInWithEmailAndPassword(auth, email, password);
+    modalLogin.classList.remove('active');
+  } catch (e) {
+    console.error('Login error', e);
+    alert('Login failed: ' + e.message);
+  }
+});
+
+signupSubmitBtn?.addEventListener('click', async () => {
+  const email = document.getElementById('login-email')?.value.trim();
+  const password = document.getElementById('login-password')?.value;
+  if (!email || !password) {
+    alert('Please enter both email and password.');
+    return;
+  }
+  try {
+    await createUserWithEmailAndPassword(auth, email, password);
+    modalLogin.classList.remove('active');
+  } catch (e) {
+    console.error('Sign‑up error', e);
+    alert('Sign‑up failed: ' + e.message);
+  }
+});
+
+// Close modal on overlay click (optional)
+modalLogin?.addEventListener('click', (e) => {
+  if (e.target === modalLogin) {
+    modalLogin.classList.remove('active');
+  }
+});
 
 // ==========================================
 // INITIALIZATION & EVENT LISTENERS

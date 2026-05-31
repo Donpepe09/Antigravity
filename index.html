@@ -172,9 +172,26 @@
             <span>High Scores & Stats</span>
           </button>
           <button id="btn-toggle-theme" class="secondary-btn btn-sm">
-            <svg class="icon-sm" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"/></svg>
-            <span>Switch Theme</span>
-          </button>
+              <svg class="icon" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"/>
+              </svg>
+              <span>Switch Theme</span>
+            </button>
+        
+<div id="modal-login" class="modal-overlay">
+  <div class="glass-panel" style="max-width:400px; width:90%; padding:24px; position:relative;">
+    <button id="btn-close-login" class="icon-btn close-btn" aria-label="Close" style="position:absolute; top:8px; right:8px;">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    </button>
+    <h2 style="margin-top:0; text-align:center;">Login / Sign Up</h2>
+    <input type="email" id="login-email" placeholder="Email" class="primary-btn" style="width:100%; margin:8px 0;"/>
+    <input type="password" id="login-password" placeholder="Password" class="primary-btn" style="width:100%; margin:8px 0;"/>
+    <div class="quick-footer-buttons" style="justify-content:center; margin-top:12px;">
+      <button id="btn-login-submit" class="primary-btn">Login</button>
+      <button id="btn-signup-submit" class="secondary-btn">Sign Up</button>
+    </div>
+  </div>
+</div>
         </div>
       </main>
       
