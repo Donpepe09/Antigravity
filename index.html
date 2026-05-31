@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#1a233a">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Kasaysayan">
+  <meta name="description" content="Kasaysayan: A premium interactive Philippine History Quiz app. compatible with iOS and Android, offline-enabled.">
+  
+  <title>Kasaysayan: Philippine History Quiz</title>
+
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,500;0,700;0,800;1,600&display=swap" rel="stylesheet">
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="dark-mode">
+
+  <!-- App Wrapper (centers app in desktop browser using phone frame, fluid on mobile) -->
+  <div class="app-container">
+    
+    <!-- 1. SPLASH SCREEN -->
+    <section id="screen-splash" class="screen active">
+      <div class="splash-content">
+        <div class="splash-logo-container">
+          <!-- Beautiful 8-Rayed Philippine Sun SVG -->
+          <svg class="ph-sun-logo" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <radialGradient id="sun-glow" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#FFD700" />
+                <stop offset="70%" stop-color="#FF8C00" stop-opacity="0.8" />
+                <stop offset="100%" stop-color="#FF8C00" stop-opacity="0" />
+              </radialGradient>
+            </defs>
+            <circle cx="50" cy="50" r="28" fill="url(#sun-glow)" opacity="0.3" class="pulse-glow" />
+            <circle cx="50" cy="50" r="14" fill="#FFC72C" />
+            <g id="rays" stroke="#FFC72C" stroke-width="4" stroke-linecap="round">
+              <!-- 8 Major Rays with 3 sub-lines each inside paths -->
+              <path d="M 50 14 L 50 4 M 48 10 L 46 6 M 52 10 L 54 6" />
+              <path d="M 50 86 L 50 96 M 48 90 L 46 94 M 52 90 L 54 94" />
+              <path d="M 14 50 L 4 50 M 10 48 L 6 46 M 10 52 L 6 54" />
+              <path d="M 86 50 L 96 50 M 90 48 L 94 46 M 90 52 L 94 54" />
+              <path d="M 24.5 24.5 L 17.5 17.5 M 21.7 20.3 L 18.9 16.1 M 20.3 21.7 L 16.1 18.9" />
+              <path d="M 75.5 75.5 L 82.5 82.5 M 78.3 79.7 L 81.1 83.9 M 79.7 78.3 L 83.9 81.1" />
+              <path d="M 75.5 24.5 L 82.5 17.5 M 78.3 20.3 L 81.1 16.1 M 79.7 21.7 L 83.9 18.9" />
+              <path d="M 24.5 75.5 L 17.5 82.5 M 21.7 79.7 L 18.9 83.9 M 20.3 78.3 L 16.1 81.1" />
+            </g>
+          </svg>
+        </div>
+        <h1 class="splash-title">KASAYSAYAN</h1>
+        <p class="splash-subtitle">Philippine History Quiz</p>
+        <div class="splash-loader-bar">
+          <div class="splash-loader-fill"></div>
+        </div>
+        <p class="splash-loading-text">Loading History Chronicles...</p>
+      </div>
+    </section>
+
+    <!-- 2. HOME SCREEN -->
+    <section id="screen-home" class="screen">
+      <!-- High-fidelity header with XP & Level info -->
+      <header class="home-header">
+        <div class="user-profile">
+          <div class="avatar-ring">
+            <span class="user-level-badge" id="hud-level">1</span>
+          </div>
+          <div class="user-info">
+            <h3 class="user-rank" id="hud-rank">Kawani</h3>
+            <div class="xp-bar-container">
+              <div class="xp-bar-fill" id="hud-xp-fill" style="width: 0%;"></div>
+              <span class="xp-text" id="hud-xp-text">0 / 200 XP</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="header-actions">
+          <button id="btn-toggle-sound" class="icon-btn" aria-label="Toggle Sound">
+            <svg class="icon" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+            </svg>
+          </button>
+          <button id="btn-show-achievements" class="icon-btn" aria-label="Achievements">
+            <svg class="icon animate-sway" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M19 5h-2V3H7v2H5c-1.1 0-2 .9-2 2v3c0 5.5 4.5 10 10 10h.01c.2 0 .4 0 .6-.02C17.5 19.5 21 15 21 10V7c0-1.1-.9-2-2-2zM5 10V7h2v3c0 1.95 1.13 3.63 2.76 4.48C7.57 13.92 5 12.24 5 10zm14 0c0 2.24-2.57 3.92-4.76 4.48C15.87 13.63 17 11.95 17 10V7h2v3z"/>
+            </svg>
+          </button>
+        </div>
+      </header>
+
+      <main class="home-main">
+        <div class="home-banner">
+          <div class="banner-sun-bg"></div>
+          <h2 class="banner-title">Test Your Historical Wisdom</h2>
+          <p class="banner-desc">Journey through the vibrant past of the Philippine archipelago, from ancient seafaring kingdoms to modern sovereign victories.</p>
+        </div>
+
+        <h3 class="section-title">Select Battle Mode</h3>
+        
+        <div class="modes-grid">
+          <!-- Mode Card 1 -->
+          <div class="mode-card active-mode" data-mode="classic">
+            <div class="mode-badge">POPULAR</div>
+            <div class="mode-icon-box">
+              <svg class="mode-svg" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+              </svg>
+            </div>
+            <div class="mode-details">
+              <h4>Classic Battle</h4>
+              <p>15-second time limit per question. Fast, tactical thinking. Maximize score with speed!</p>
+            </div>
+            <div class="mode-arrow">
+              <svg viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
+            </div>
+          </div>
+
+          <!-- Mode Card 2 -->
+          <div class="mode-card" data-mode="survival">
+            <div class="mode-icon-box crimson-glow">
+              <svg class="mode-svg" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+              </svg>
+            </div>
+            <div class="mode-details">
+              <h4>Survival Run</h4>
+              <p>No timers, but only 3 lives. One incorrect answer loses a life. Keep going indefinitely!</p>
+            </div>
+            <div class="mode-arrow">
+              <svg viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
+            </div>
+          </div>
+
+          <!-- Mode Card 3 -->
+          <div class="mode-card" data-mode="chronology">
+            <div class="mode-badge timeline-badge">TACTICAL</div>
+            <div class="mode-icon-box gold-glow">
+              <svg class="mode-svg" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z"/>
+              </svg>
+            </div>
+            <div class="mode-details">
+              <h4>Chronology (Timeline)</h4>
+              <p>Arrange historical events from oldest to newest. Drag and order the course of history!</p>
+            </div>
+            <div class="mode-arrow">
+              <svg viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
+            </div>
+          </div>
+        </div>
+
+        <button id="btn-start-journey" class="primary-btn pulse-glow-btn">
+          <span>Start Journey</span>
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg>
+        </button>
+
+        <div class="quick-footer-buttons">
+          <button id="btn-show-stats" class="secondary-btn btn-sm">
+            <svg class="icon-sm" viewBox="0 0 24 24" fill="currentColor"><path d="M10 20h4V4h-4v16zm-6 0h4v-8H4v8zM16 9v11h4V9h-4z"/></svg>
+            <span>High Scores & Stats</span>
+          </button>
+          <button id="btn-toggle-theme" class="secondary-btn btn-sm">
+            <svg class="icon-sm" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"/></svg>
+            <span>Switch Theme</span>
+          </button>
+        </div>
+      </main>
+      
+      <!-- Footer credits -->
+      <footer class="app-footer">
+        <p>Kasaysayan v1.0.0 • Crafted for National History</p>
+      </footer>
+    </section>
+
+    <!-- 3. CATEGORY SELECTION SCREEN -->
+    <section id="screen-categories" class="screen">
+      <header class="screen-header">
+        <button id="btn-back-to-home" class="icon-btn back-btn" aria-label="Go Back">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+        </button>
+        <h2 class="header-title">Choose Historical Era</h2>
+      </header>
+
+      <main class="categories-main">
+        <p class="category-prompt">Select an era to test your knowledge, or choose the Ultimate Mix for a true test of grit.</p>
+        
+        <div class="categories-list">
+          <!-- Cat 1 -->
+          <div class="category-item-card" data-category="pre-colonial">
+            <div class="cat-icon-container">
+              <!-- Balangiga Boat/Native Ship SVG -->
+              <svg viewBox="0 0 64 64" class="cat-svg">
+                <path fill="#4A90E2" d="M10 40c5 5 15 5 20 0s15-5 24 0l-5 12c-5 3-20 3-29 0L10 40z"/>
+                <path fill="#FFD700" d="M32 8v28l12-14L32 8zm-2 2L15 22l15 6V10z" opacity="0.9"/>
+                <path stroke="#fff" stroke-width="2" d="M30 4v34" fill="none"/>
+              </svg>
+            </div>
+            <div class="cat-details">
+              <h4>Pre-Colonial & Early Contacts</h4>
+              <p>Datus, ancient barangays, tribal babaylans, and early encounters prior to Spanish pacification.</p>
+            </div>
+          </div>
+
+          <!-- Cat 2 -->
+          <div class="category-item-card" data-category="spanish">
+            <div class="cat-icon-container terracotta-bg">
+              <!-- Scroll & Quill SVG -->
+              <svg viewBox="0 0 64 64" class="cat-svg">
+                <path fill="#E05B35" d="M12 16h40v36H12z"/>
+                <path fill="#FBE6D6" d="M16 12h32c2 0 4 2 4 4v32c0 2-2 4-4 4H16c-2 0-4-2-4-4V16c0-2 2-4 4-4z"/>
+                <path stroke="#E05B35" stroke-width="2" d="M22 22h20M22 30h20M22 38h14" fill="none"/>
+                <path fill="#8B572A" d="M42 46l10-25-3-1-10 25 3 1z"/>
+                <path fill="#FFD700" d="M52 16l3-5-5 1 2 4z"/>
+              </svg>
+            </div>
+            <div class="cat-details">
+              <h4>Spanish Era & Revolution</h4>
+              <p>Three centuries of Spanish rule, the Propaganda Movement, Gomburza, Katipunan, and Rizal.</p>
+            </div>
+          </div>
+
+          <!-- Cat 3 -->
+          <div class="category-item-card" data-category="american-japanese">
+            <div class="cat-icon-container forest-bg">
+              <!-- Shield / General Cap SVG -->
+              <svg viewBox="0 0 64 64" class="cat-svg">
+                <path fill="#2E7D32" d="M32 6C18 6 12 16 12 28c0 14 16 26 20 30 4-4 20-16 20-30 0-12-6-22-20-22z"/>
+                <path fill="#FFC72C" d="M32 14v38c1 0 14-11 14-24 0-10-5-17-14-14z" opacity="0.4"/>
+                <circle cx="32" cy="24" r="8" fill="#FFC72C"/>
+                <path fill="#1565C0" d="M28 24h8l-4 6z"/>
+              </svg>
+            </div>
+            <div class="cat-details">
+              <h4>American & Japanese Occupations</h4>
+              <p>The Treaty of Paris, Balangiga bells, Commonwealth era, WWII, and Bataan Death March resistance.</p>
+            </div>
+          </div>
+
+          <!-- Cat 4 -->
+          <div class="category-item-card" data-category="modern">
+            <div class="cat-icon-container indigo-bg">
+              <!-- Modern Buildings & Constitution SVG -->
+              <svg viewBox="0 0 64 64" class="cat-svg">
+                <path fill="#1A237E" d="M8 56h48v4H8z"/>
+                <path fill="#3F51B5" d="M12 24h10v32H12zM27 14h10v42H27zM42 32h10v24H42z"/>
+                <circle cx="48" cy="14" r="6" fill="#FFC72C"/>
+                <path fill="#FFD700" d="M22 28h2v4h-2zm0 8h2v4h-2zm0 8h2v4h-2zm15-20h2v4h-2zm0 8h2v4h-2zm0 8h2v4h-2zm0 8h2v4h-2zm15-12h2v4h-2zm0 8h2v4h-2z" fill-opacity="0.8"/>
+              </svg>
+            </div>
+            <div class="cat-details">
+              <h4>Post-War & Modern Era</h4>
+              <p>Independence in 1946, Martial Law trials, EDSA People Power, Pinatubo, and maritime sovereignty victories.</p>
+            </div>
+          </div>
+
+          <!-- Cat 5 -->
+          <div class="category-item-card mix-card" data-category="mix">
+            <div class="cat-icon-container gold-bg">
+              <svg viewBox="0 0 64 64" class="cat-svg animate-rotate">
+                <circle cx="32" cy="32" r="28" fill="#FFC72C" opacity="0.2"/>
+                <circle cx="32" cy="32" r="16" fill="#FFC72C"/>
+                <path stroke="#fff" stroke-width="3" stroke-linecap="round" d="M32 8v8M32 48v8M8 32h8M48 32h8" fill="none"/>
+                <path stroke="#fff" stroke-width="2" stroke-linecap="round" d="M15 15l6 6M43 43l6 6M43 15l-6 6M15 43l6-6" fill="none"/>
+              </svg>
+            </div>
+            <div class="cat-details">
+              <h4>The Ultimate Mix</h4>
+              <p>The entire spectrum of Philippine History in a randomized gauntlet of randomized complexity.</p>
+            </div>
+          </div>
+        </div>
+      </main>
+    </section>
+
+    <!-- 4. GAME ARENA SCREEN (For Classic & Survival) -->
+    <section id="screen-game" class="screen">
+      <header class="game-header">
+        <button id="btn-quit-game" class="icon-btn back-btn" aria-label="Quit Game">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+        
+        <div class="game-hud">
+          <div class="hud-item score-hud">
+            <span class="hud-label">SCORE</span>
+            <span class="hud-value" id="game-score">0000</span>
+          </div>
+
+          <!-- Mode Info Widget (Lives or Timer) -->
+          <div class="hud-center-widget">
+            <!-- Classic Timer Widget -->
+            <div id="classic-timer-widget" class="timer-widget">
+              <svg class="timer-ring-svg" viewBox="0 0 36 36">
+                <path class="timer-ring-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                <path id="timer-ring-progress" class="timer-ring-progress" stroke-dasharray="100, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+              </svg>
+              <span id="timer-number" class="timer-number">15</span>
+            </div>
+
+            <!-- Survival Lives Widget -->
+            <div id="survival-lives-widget" class="lives-widget hide">
+              <span class="heart active-heart">❤️</span>
+              <span class="heart active-heart">❤️</span>
+              <span class="heart active-heart">❤️</span>
+            </div>
+          </div>
+
+          <div class="hud-item progress-hud">
+            <span class="hud-label">PROGRESS</span>
+            <span class="hud-value" id="game-progress">1 / 10</span>
+          </div>
+        </div>
+      </header>
+
+      <div class="game-arena-content">
+        <!-- Progress bar line -->
+        <div class="arena-progress-track">
+          <div id="arena-progress-fill" class="arena-progress-fill" style="width: 10%;"></div>
+        </div>
+
+        <!-- Category Tag -->
+        <div id="arena-category-badge" class="category-badge">Era</div>
+
+        <!-- Question Card -->
+        <div class="question-card">
+          <h3 id="question-text">Loading question text...</h3>
+        </div>
+
+        <!-- Options Grid -->
+        <div class="options-container" id="options-grid">
+          <!-- Dynamically populated answer buttons -->
+          <button class="option-btn">Option 1</button>
+          <button class="option-btn">Option 2</button>
+          <button class="option-btn">Option 3</button>
+          <button class="option-btn">Option 4</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. CHRONOLOGY DECK SCREEN -->
+    <section id="screen-chronology" class="screen">
+      <header class="game-header">
+        <button id="btn-quit-chrono" class="icon-btn back-btn" aria-label="Quit Chronology">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+        
+        <div class="chrono-hud-title">
+          <h3>Chronology Mode</h3>
+          <p id="chrono-round-title">Topic: Timeline</p>
+        </div>
+
+        <div class="hud-item score-hud">
+          <span class="hud-label">SCORE</span>
+          <span class="hud-value" id="chrono-score">0000</span>
+        </div>
+      </header>
+
+      <main class="chrono-main">
+        <div class="chrono-banner-alert">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+          <span class="chrono-alert-text">Click cards to swap their positions. Arrange them chronologically from <strong>Oldest (Top)</strong> to <strong>Newest (Bottom)</strong>.</span>
+        </div>
+
+        <!-- Draggable / Clickable Timeline Cards Deck -->
+        <div class="chrono-deck" id="chrono-deck-container">
+          <!-- Timeline Card Slot 1 -->
+          <div class="chrono-slot" data-index="0">
+            <span class="slot-num">1</span>
+            <div class="chrono-card" draggable="true" data-id="e1">
+              <span class="chrono-text">Event Text A</span>
+              <span class="chrono-icon-grip">☰</span>
+            </div>
+          </div>
+          <!-- Timeline Card Slot 2 -->
+          <div class="chrono-slot" data-index="1">
+            <span class="slot-num">2</span>
+            <div class="chrono-card" draggable="true" data-id="e2">
+              <span class="chrono-text">Event Text B</span>
+              <span class="chrono-icon-grip">☰</span>
+            </div>
+          </div>
+          <!-- Timeline Card Slot 3 -->
+          <div class="chrono-slot" data-index="2">
+            <span class="slot-num">3</span>
+            <div class="chrono-card" draggable="true" data-id="e3">
+              <span class="chrono-text">Event Text C</span>
+              <span class="chrono-icon-grip">☰</span>
+            </div>
+          </div>
+          <!-- Timeline Card Slot 4 -->
+          <div class="chrono-slot" data-index="3">
+            <span class="slot-num">4</span>
+            <div class="chrono-card" draggable="true" data-id="e4">
+              <span class="chrono-text">Event Text D</span>
+              <span class="chrono-icon-grip">☰</span>
+            </div>
+          </div>
+        </div>
+
+        <button id="btn-verify-chronology" class="primary-btn pulse-glow-btn">
+          <span>Verify Chronicle Order</span>
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg>
+        </button>
+      </main>
+    </section>
+
+    <!-- 6. "DID YOU KNOW?" FACT SHEET OVERLAY -->
+    <div id="modal-fact" class="modal-overlay">
+      <div class="fact-card animate-pop-in">
+        <div id="fact-card-indicator" class="fact-header success-header">
+          <div class="fact-icon-shell">
+            <span id="fact-result-icon">✓</span>
+          </div>
+          <h3 id="fact-result-title">TAMÁ! (Correct)</h3>
+        </div>
+
+        <div class="fact-content">
+          <!-- Scroll outline -->
+          <div class="fact-scroll-box">
+            <h4 class="fact-subtitle">Historical Chronicle</h4>
+            <div class="scroll-decoration top-decor">❖</div>
+            <p id="fact-explanation-text">Magellan was defeated by the brave forces of Mactan led by Lapulapu in 1521, establishing our first national defense of freedom.</p>
+            <div class="scroll-decoration bottom-decor">❖</div>
+          </div>
+        </div>
+
+        <div class="fact-footer">
+          <button id="btn-continue-fact" class="primary-btn block-btn">
+            <span>Continue Chronicle</span>
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 7. POST-GAME SUMMARY SCREEN -->
+    <section id="screen-summary" class="screen">
+      <main class="summary-main">
+        <div class="victory-confetti-anchor" id="confetti-canvas-container"></div>
+        
+        <!-- Premium Rank Emblem Display -->
+        <div class="summary-emblem-box">
+          <div class="emblem-glow"></div>
+          <svg class="summary-badge-svg animate-bounce-slow" viewBox="0 0 100 100" width="120" height="120">
+            <circle cx="50" cy="50" r="45" fill="#FFC72C" fill-opacity="0.1" stroke="#FFC72C" stroke-width="2"/>
+            <polygon points="50,15 62,38 88,42 68,60 74,85 50,72 26,85 32,60 12,42 38,38" fill="#FFC72C" stroke="#E6A100" stroke-width="1.5"/>
+            <path d="M30 50h40v6H30zm6 10h28v4H36z" fill="#fff" opacity="0.3"/>
+          </svg>
+        </div>
+
+        <h2 class="summary-title" id="summary-headline">Mabuhay!</h2>
+        <p class="summary-subtitle" id="summary-subhead">You have successfully navigated this epoch of the archipelago.</p>
+
+        <!-- Stats Card Grid -->
+        <div class="summary-stats-card">
+          <div class="stat-badge-item">
+            <span class="stat-lbl">FINAL SCORE</span>
+            <span class="stat-val yellow-text" id="sum-score">0000</span>
+          </div>
+          <div class="stat-badge-item">
+            <span class="stat-lbl">ACCURACY</span>
+            <span class="stat-val" id="sum-accuracy">100%</span>
+          </div>
+          <div class="stat-badge-item">
+            <span class="stat-lbl">CORRECT</span>
+            <span class="stat-val" id="sum-correct">10 / 10</span>
+          </div>
+          <div class="stat-badge-item">
+            <span class="stat-lbl">XP EARNED</span>
+            <span class="stat-val green-text" id="sum-xp">+150 XP</span>
+          </div>
+        </div>
+
+        <!-- Level Up Notification Banner (Hidden initially) -->
+        <div id="summary-level-up-banner" class="level-up-banner hide">
+          <span class="level-star">★</span>
+          <span id="level-up-text">RANK ADVANCED TO ILUSTRADO!</span>
+          <span class="level-star">★</span>
+        </div>
+
+        <!-- Progression fill anim -->
+        <div class="summary-progress-section">
+          <p class="summary-level-indicator">Level <span id="sum-level-before">1</span> Progression</p>
+          <div class="xp-bar-container large-xp-bar">
+            <div class="xp-bar-fill" id="sum-xp-fill" style="width: 0%;"></div>
+            <span class="xp-text" id="sum-xp-text">0 / 200 XP</span>
+          </div>
+        </div>
+
+        <div class="summary-actions">
+          <button id="btn-replay" class="primary-btn pulse-glow-btn block-btn">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/></svg>
+            <span>Play Again</span>
+          </button>
+          
+          <button id="btn-change-mode" class="secondary-btn block-btn">
+            <span>Change Battle Mode</span>
+          </button>
+          
+          <button id="btn-go-home" class="tertiary-btn block-btn">
+            <span>Return to Main Menu</span>
+          </button>
+        </div>
+      </main>
+    </section>
+
+    <!-- 8. STATS & ACHIEVEMENTS DRAWER/MODAL -->
+    <div id="drawer-stats" class="drawer-overlay">
+      <div class="drawer-content animate-slide-in">
+        <header class="drawer-header">
+          <h2>Stats & Achievements</h2>
+          <button id="btn-close-stats" class="icon-btn close-btn" aria-label="Close Drawer">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+          </button>
+        </header>
+
+        <div class="drawer-scroll-area">
+          
+          <!-- Section A: Stats Summary -->
+          <div class="stats-section-box">
+            <h3 class="drawer-sec-title">Personal Records</h3>
+            
+            <div class="stats-grid">
+              <div class="stat-small-card">
+                <span class="stat-val" id="stat-lvl">1</span>
+                <span class="stat-lbl">Current Level</span>
+              </div>
+              <div class="stat-small-card">
+                <span class="stat-val text-gold" id="stat-xp">0</span>
+                <span class="stat-lbl">Cumulative XP</span>
+              </div>
+              <div class="stat-small-card">
+                <span class="stat-val" id="stat-played">0</span>
+                <span class="stat-lbl">Games Finished</span>
+              </div>
+              <div class="stat-small-card">
+                <span class="stat-val" id="stat-accuracy">0%</span>
+                <span class="stat-lbl">Average Accuracy</span>
+              </div>
+            </div>
+
+            <div class="highscores-table">
+              <h4 class="highscores-table-title">High Scores by Mode</h4>
+              <div class="highscore-row">
+                <span class="mode-lbl">⚔️ Classic Mode</span>
+                <span class="score-val" id="score-classic">0 pts</span>
+              </div>
+              <div class="highscore-row">
+                <span class="mode-lbl">🛡️ Survival Mode</span>
+                <span class="score-val" id="score-survival">0 pts</span>
+              </div>
+              <div class="highscore-row">
+                <span class="mode-lbl">⏳ Chronology Mode</span>
+                <span class="score-val" id="score-chronology">0 pts</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section B: Achievements -->
+          <div class="stats-section-box">
+            <h3 class="drawer-sec-title">Historical Rank Badges</h3>
+            <p class="drawer-sec-subtitle">Unlock grand titles as you earn XP through historical accuracy.</p>
+            
+            <div class="badges-list" id="badges-container">
+              <!-- Dynamically rendered badge items -->
+              <div class="badge-item locked">
+                <div class="badge-icon-box">★</div>
+                <div class="badge-info">
+                  <h4>Lakbay-Lahi (Explorer)</h4>
+                  <p>Answered your very first question • <span class="badge-status">Locked</span></p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <button id="btn-reset-stats" class="danger-btn block-btn">
+            <span>Reset All Progress</span>
+          </button>
+
+        </div>
+      </div>
+    </div>
+
+  </div> <!-- End App Wrapper -->
+
+  <!-- JavaScript Entrypoints -->
+  <script type="module" src="app.js"></script>
+</body>
+</html>
