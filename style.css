@@ -428,6 +428,23 @@ button:active {
   top: 0;
 }
 
+/* Connection status badge */
+.connection-badge {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--border-radius-sm);
+  padding: 4px 8px;
+  font-size: 0.75rem;
+  color: var(--text-primary);
+}
+
+.connection-badge .badge-icon {
+  margin-right: 4px;
+}
+
 .user-profile {
   display: flex;
   align-items: center;
@@ -514,10 +531,32 @@ button:active {
   color: var(--text-muted);
 }
 
-.header-actions {
+.connection-badge {
   display: flex;
-  gap: 8px;
+  align-items: center;
+  gap: 4px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--border-radius-sm);
+  padding: 4px 8px;
+  font-size: 0.75rem;
+  color: var(--text-primary);
+  box-shadow: 0 2px 8px var(--glass-shadow);
 }
+
+.connection-badge .badge-icon {
+  font-size: 1rem;
+}
+
+.connection-badge.offline .badge-text {
+  color: var(--text-muted);
+}
+
+.connection-badge.online .badge-text {
+  color: var(--color-primary);
+}
+
+
 
 .home-main {
   padding: 24px;
